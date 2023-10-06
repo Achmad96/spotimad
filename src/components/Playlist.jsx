@@ -13,17 +13,24 @@ export default function Playlist(props) {
         }
         callData(); 
     }, [token])
-
+    
     return (
-        <div className="flex flex-col bg-zinc-800 w-60 h-[65vh] overflow-y-auto p-5 text-white rounded-xl gap-2">
+        <div className="flex flex-col bg-[#121212] w-60 h-[68vh] overflow-y-auto text-white rounded-xl gap-2">
             {
                 playlist?.items?.map((v, i) => {
+                    const class_name = `flex gap-3 hover:bg-zinc-700 w-full p-5 ${props.selectedSongList === v.id ? "bg-zinc-700" : ""}`;
+                    if (!playlist) {
+                        props.setPlaylist({id:v.id, name:v.name, tracks:v.tracks.total, img:v.images[0]})
+                    }
                     return (
-                        <div key={v.id} className="flex gap-3 hover:bg-zinc-700 w-full p-5" onClick={() => props.setSelectedSongList(v.id)}>
+                        <div key={v.id} className={class_name} onClick={() => {
+                                props.setSelectedSongList(v.id)
+                                props.setPlaylist({id:v.id, name:v.name, tracks:v.tracks.total, img: v.images[0].url, owner: v.owner.display_name});
+                            }}>
                             <img src={v.images[i].url} alt="playlist" className="w-20 h-20 rounded-xl"></img>
-                            <div>
+                            <div className="flex flex-col gap-3">
                                 <p className="text-lg">{v.name}</p>
-                                <p className="text-sm text-opacity-75">{v.tracks.total} songs</p>
+                                <p className="text-sm opacity-50">Playlist ▪ {v.owner.display_name}</p>
                             </div>
                         </div>
                     )

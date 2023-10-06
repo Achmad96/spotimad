@@ -8,12 +8,14 @@ import BottomLayout from "./layout/BottomLayout";
 import SpotifyWebApi from 'spotify-web-api-js';
 
 const spotifyApi = new SpotifyWebApi();
-const scope = ["user-read-playback-state", "user-modify-playback-state", "user-library-read", "user-read-currently-playing"].join("%20")
+const scope = ["user-read-playback-state", "user-modify-playback-state", "user-library-read", "user-read-currently-playing"].join("%20");
 
 export const TokenContext = createContext();
 export default function App() {
 	const [selectedSongList, setSelectedSongList] = useState();
 	const [token, setToken] = useState();
+	const [playlist, setPlaylist] = useState();
+
 	useEffect(() => {
     const clientId = process.env.REACT_APP_BASIC_CLIENT_ID;
     const redirectUri = process.env.REACT_APP_REDIRECT_URI;
@@ -37,11 +39,11 @@ export default function App() {
 
 
 	return (
-		<main className="flex flex-col bg-slate-700 h-screen">
+		<main className="flex flex-col bg-black h-screen">
 				<TokenContext.Provider value={token}>
-				<div className="flex flex-row mb-10">
-					<LeftLayout setSelectedSongList={setSelectedSongList}/>
-					<RightLayout list_song={selectedSongList}/>
+				<div className="flex flex-row">
+					<LeftLayout setPlaylist={setPlaylist} selectedSongList={selectedSongList} setSelectedSongList={setSelectedSongList}/>
+					<RightLayout playlist={playlist} list_song={selectedSongList}/>
 				</div>
 					<BottomLayout token={token}/>
 				</TokenContext.Provider>
