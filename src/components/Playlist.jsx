@@ -24,7 +24,7 @@ export default function Playlist(props) {
                     }
                     return (
                         <div key={v.id} className={class_name} onClick={() => {
-                                props.setSelectedSongList(v.id)
+                                props.setSelectedSongList(v.id);
                                 props.setPlaylist({id:v.id, name:v.name, tracks:v.tracks.total, img: v.images[0].url, owner: v.owner.display_name});
                             }}>
                             <img src={v.images[i].url} alt="playlist" className="w-20 h-20 rounded-xl"></img>
