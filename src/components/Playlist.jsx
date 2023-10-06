@@ -9,6 +9,7 @@ export default function Playlist(props) {
             if (token !== undefined) {
                 const response = await fetchPlaylist(token);
                 setPlaylist(response.data);
+                props.setPlaylist(response.data);
             }
         }
         callData(); 

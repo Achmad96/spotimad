@@ -15,7 +15,6 @@ export default function App() {
 	const [selectedSongList, setSelectedSongList] = useState();
 	const [token, setToken] = useState();
 	const [playlist, setPlaylist] = useState();
-
 	useEffect(() => {
     const clientId = process.env.REACT_APP_BASIC_CLIENT_ID;
     const redirectUri = process.env.REACT_APP_REDIRECT_URI;
