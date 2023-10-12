@@ -17,9 +17,12 @@ const scope = [
 
 export const TokenContext = createContext();
 export default function App() {
-    const [selectedSongList, setSelectedSongList] = useState();
+    const [songListId, setSongListId] = useState();
     const [token, setToken] = useState();
     const [playlist, setPlaylist] = useState();
+    const [selectedSong, setSelectedSong] = useState();
+    const [volume, setVolume] = useState(0.5);
+
     useEffect(() => {
         const clientId = process.env.REACT_APP_BASIC_CLIENT_ID;
         const redirectUri = process.env.REACT_APP_REDIRECT_URI;
@@ -42,17 +45,25 @@ export default function App() {
     }, []);
 
     return (
-        <main className="flex flex-col bg-black h-screen">
+        <main className="flex flex-col bg-black h-screen overflow-hidden">
             <TokenContext.Provider value={token}>
                 <div className="flex flex-row">
                     <LeftLayout
                         setPlaylist={setPlaylist}
-                        selectedSongList={selectedSongList}
-                        setSelectedSongList={setSelectedSongList}
+                        songListState={[songListId, setSongListId]}
                     />
-                    <RightLayout playlist={playlist} list_song={selectedSongList} />
+                    <RightLayout
+                        playlist={playlist}
+                        list_song={songListId}
+                        volumeState={[volume, setVolume]}
+                        selectedSongState={[selectedSong, setSelectedSong]}
+                    />
                 </div>
-                <BottomLayout token={token} />
+                <BottomLayout
+                    token={token}
+                    volumeState={[volume, setVolume]}
+                    selectedSongState={[selectedSong, setSelectedSong]}
+                />
             </TokenContext.Provider>
         </main>
     );
