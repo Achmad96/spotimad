@@ -13,15 +13,15 @@ const scope = [
     "user-modify-playback-state",
     "user-library-read",
     "user-read-currently-playing",
+    "user-modify-playback-state",
 ].join("%20");
 
 export const TokenContext = createContext();
 export default function App() {
-    const [songListId, setSongListId] = useState();
+    const [listSongId, setListSongId] = useState();
     const [token, setToken] = useState();
     const [playlist, setPlaylist] = useState();
-    const [selectedSong, setSelectedSong] = useState();
-    const [volume, setVolume] = useState(0.5);
+    const [position, setPosition] = useState();
 
     useEffect(() => {
         const clientId = process.env.REACT_APP_BASIC_CLIENT_ID;
@@ -49,21 +49,16 @@ export default function App() {
             <TokenContext.Provider value={token}>
                 <div className="flex flex-row">
                     <LeftLayout
-                        setPlaylist={setPlaylist}
-                        songListState={[songListId, setSongListId]}
+                        playlist_state={[playlist, setPlaylist]}
+                        listSongId_state={[listSongId, setListSongId]}
                     />
                     <RightLayout
-                        playlist={playlist}
-                        list_song={songListId}
-                        volumeState={[volume, setVolume]}
-                        selectedSongState={[selectedSong, setSelectedSong]}
+                        playlist_state={[playlist, setPlaylist]}
+                        listSongId_state={[listSongId, setListSongId]}
+                        position_state={[position, setPosition]}
                     />
                 </div>
-                <BottomLayout
-                    token={token}
-                    volumeState={[volume, setVolume]}
-                    selectedSongState={[selectedSong, setSelectedSong]}
-                />
+                <BottomLayout token={token} />
             </TokenContext.Provider>
         </main>
     );

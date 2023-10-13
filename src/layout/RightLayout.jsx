@@ -29,8 +29,6 @@ const reducer = (state, action) => {
     return { ...state };
 };
 
-const audio = new Audio();
-
 const millisToMinutesAndSeconds = (millis) => {
     var minutes = Math.floor(millis / 60000);
     var seconds = ((millis % 60000) / 1000).toFixed(0);
@@ -39,37 +37,29 @@ const millisToMinutesAndSeconds = (millis) => {
 
 export default function RightLayout(props) {
     const token = useContext(TokenContext);
-    const { playlist, list_song, volumeState, selectedSongState } = props;
-    const [volume] = volumeState;
-    const [, setSelectedSong] = selectedSongState;
+    const { playlist_state, listSongId_state, position_state } = props;
+    const [playlist] = playlist_state;
     const [list, setList] = useState({});
+    const [, setPosition] = position_state;
+    const [listSongId] = listSongId_state;
+
     const playlistEl = useRef(null);
     const description = useRef(null);
     const songsEl = useRef(null);
-
     const [state, dispatch] = useReducer(reducer, { playlist: false, description: false });
-
-    audio.volume = volume;
-    const handlePlay = (src, object) => {
-        if (src) {
-            audio.src = src;
-            setSelectedSong(object);
-            audio.play();
-        }
-    };
 
     useEffect(() => {
         const callData = async () => {
             if (token && playlist) {
                 const response = await fetchPlaylistItems(
                     token,
-                    list_song ? list_song : playlist?.items[0]?.id
+                    listSongId ? listSongId : playlist?.items[0]?.id
                 );
                 setList(response);
             }
         };
         callData();
-    }, [token, list_song, playlist]);
+    }, [token, listSongId, playlist]);
     const handleScroll = (e) => {
         if (playlistEl.current?.getBoundingClientRect().bottom + 200 < e.target.scrollTop) {
             dispatch({ type: "playlist" });
@@ -92,58 +82,32 @@ export default function RightLayout(props) {
 
     return (
         <div
-            className="flex flex-col w-full h-[85vh] bg-fixed overflow-y-auto text-white ml-2 my-3 rounded-xl"
+            className="flex flex-col w-full h-[84vh] bg-fixed overflow-y-auto text-white ml-2 my-3 rounded-xl"
             onScroll={handleScroll}
         >
             <div
                 ref={playlistEl}
                 className="w-full h-full bg-gradient-to-b from-[#39E08C] pb-5 to-[#121212] text-7xl font-bold"
             >
-                {playlist?.name ? (
-                    <div className="flex flex-row items-end transition ease-in-out duration-300 py-5 gap-3 pl-10">
-                        <img
-                            src={playlist?.img}
-                            alt="song"
-                            className="w-52 h-w-52 shadow-2xl"
-                        ></img>
-                        <div className="flex flex-col gap-3">
-                            <div>
-                                <p className="text-sm">Playlist</p>
-                                <p className="text-6xl">{playlist?.name}</p>
-                            </div>
-                            <p className="text-base">
-                                {playlist?.owner} ▪ {playlist?.tracks} lagu,{" "}
-                                {millisToMinutesAndSeconds(
-                                    list?.data.items[playlist?.index].track.duration_ms
-                                )}{" "}
-                                <span className="opacity-70"></span>
-                            </p>
+                <div className="flex flex-row items-end transition ease-in-out duration-300 py-5 gap-3 pl-10">
+                    <img
+                        src={playlist?.img ?? playlist?.items[0]?.images[0].url}
+                        alt="song"
+                        className="w-52 h-w-52 shadow-2xl"
+                    ></img>
+                    <div className="flex flex-col ml-5 gap-3">
+                        <div>
+                            <p className="text-sm">Playlist</p>
+                            <p className="text-6xl">{playlist?.name ?? playlist?.items[0].name}</p>
                         </div>
+                        <p className="text-base">
+                            {playlist?.owner ?? playlist?.items[0]?.owner?.display_name} ▪{" "}
+                            <span className="font-light">
+                                {playlist?.tracks ?? playlist?.items[0]?.tracks?.total} lagu
+                            </span>
+                        </p>
                     </div>
-                ) : (
-                    <div className="flex flex-row items-end transition ease-in-out duration-300 py-5 gap-3 pl-10">
-                        <img
-                            src={playlist?.items[0]?.images[0].url}
-                            alt="song"
-                            className="w-52 h-w-52 shadow-2xl"
-                        ></img>
-                        <div className="flex flex-col gap-3">
-                            <div>
-                                <p className="text-sm">Playlist</p>
-                                <p className="text-6xl">{playlist?.items[0].name}</p>
-                            </div>
-                            <p className="text-base">
-                                {playlist?.items[0].owner.display_name} ▪{" "}
-                                {playlist?.items[0].tracks.total} lagu,{" "}
-                                <span className="opacity-70">
-                                    {millisToMinutesAndSeconds(
-                                        list?.data?.items[0].track.duration_ms
-                                    )}
-                                </span>
-                            </p>
-                        </div>
-                    </div>
-                )}
+                </div>
             </div>
             <div ref={songsEl} className="w-full bg-[#121212]">
                 <div
@@ -204,16 +168,7 @@ export default function RightLayout(props) {
                                     <div
                                         key={v?.track?.id}
                                         className="flex items-center ml-4 mr-4 rounded-md hover:bg-[#2B3731]"
-                                        onClick={() => {
-                                            handlePlay(v.track.preview_url, {
-                                                name: v.track.name,
-                                                artists: v.track.artists
-                                                    .map((v) => v.name)
-                                                    .join(", "),
-                                                id: v.id,
-                                                img: v.track.album.images[0].url,
-                                            });
-                                        }}
+                                        onClick={() => setPosition({ index: i })}
                                     >
                                         <p className="p-5">{i + 1}</p>
                                         <div className={class_name}>
@@ -225,6 +180,9 @@ export default function RightLayout(props) {
                                                 </p>
                                             </div>
                                         </div>
+                                        <p className="mr-[14rem]">
+                                            {millisToMinutesAndSeconds(v.track.duration_ms)}
+                                        </p>
                                     </div>
                                 );
                             })

@@ -2,10 +2,12 @@ import { useState, useEffect, useContext } from "react";
 import fetchPlaylist from "../utils/fetchPlaylist";
 import { TokenContext } from "../App";
 export default function Playlist(props) {
+    const { playlist_state, listSongId_state } = props;
     const [list, setList] = useState({});
-    const { setPlaylist, songListState } = props;
-    const [songListId, setSongListId] = songListState;
+    const [, setPlaylist] = playlist_state;
+    const [listSongId, setListSongId] = listSongId_state;
     const token = useContext(TokenContext);
+
     useEffect(() => {
         const callData = async () => {
             if (token !== undefined) {
@@ -21,7 +23,7 @@ export default function Playlist(props) {
         <div className="flex flex-col bg-[#121212] w-60 h-[68vh] overflow-y-auto text-white rounded-xl gap-2">
             {list?.items?.map((v, i) => {
                 const class_name = `flex gap-3 hover:bg-zinc-700 w-full p-5 ${
-                    songListId === v.id ? "bg-zinc-700" : ""
+                    listSongId === v.id ? "bg-zinc-700" : ""
                 }`;
                 if (!list) {
                     setPlaylist({
@@ -29,6 +31,7 @@ export default function Playlist(props) {
                         name: v.name,
                         tracks: v.tracks.total,
                         img: v.images[0],
+                        context_uri: v.uri,
                     });
                 }
                 return (
@@ -36,13 +39,14 @@ export default function Playlist(props) {
                         key={v.id}
                         className={class_name}
                         onClick={() => {
-                            setSongListId(v.id);
+                            setListSongId(v.id);
                             setPlaylist({
                                 id: v.id,
                                 name: v.name,
                                 tracks: v.tracks.total,
                                 img: v.images[0].url,
                                 owner: v.owner.display_name,
+                                context_uri: v.uri,
                                 index: i,
                             });
                         }}

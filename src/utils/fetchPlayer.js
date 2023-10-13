@@ -1,7 +1,8 @@
 import axios from "axios";
-
-export default async function fetchPlayer(token, context_uri) {
-    const url = "https://api.spotify.com/v1/me/player/play";
+export default async function (token, device_id, context_uri, position) {
+    console.log("file: fetchPlayer.js:3 ~ position:", position);
+    console.log("file: fetchPlayer.js:3 ~ context_uri:", context_uri);
+    const url = `https://api.spotify.com/v1/me/player/play?device_id=${device_id}`;
     const response = await axios({
         url,
         method: "put",
@@ -11,7 +12,7 @@ export default async function fetchPlayer(token, context_uri) {
         body: {
             context_uri,
             offset: {
-                position: 1,
+                position,
             },
             position_ms: 0,
         },

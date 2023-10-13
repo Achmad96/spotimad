@@ -5,7 +5,10 @@ export default function LeftLayout(props) {
     return (
         <aside className="flex flex-col ml-1 mt-3 mb-2 gap-2">
             <UserProfile />
-            <Playlist setPlaylist={props.setPlaylist} songListState={props.songListState} />
+            <Playlist
+                playlist_state={props.playlist_state}
+                listSongId_state={props.listSongId_state}
+            />
         </aside>
     );
 }
