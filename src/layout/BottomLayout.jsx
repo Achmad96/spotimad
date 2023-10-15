@@ -1,43 +1,51 @@
 import { FaPauseCircle, FaPlayCircle } from "react-icons/fa";
 import { BsSkipStartFill, BsFillSkipEndFill } from "react-icons/bs";
-import fetchPlayer from "../utils/fetchPlayer";
-import { useEffect, useState } from "react";
-import fetchPause from "../utils/fetchPause";
-import fetchCurrentlyPlaying from "../utils/fetchCurrentlyPlaying";
-import fetchPrevAndNext from "../utils/fetchPrevAndNext";
-import fetchUserQueue from "../utils/fetchUserQueue";
+import { useEffect, useState, useContext } from "react";
+import { Token } from "../App";
+import fetchHandler from "../utils/fetchHandler";
 
-export default function BottomLayout(props) {
-    const { token } = props;
+export default function BottomLayout() {
+    const token = useContext(Token);
     const [isPlaying, setPlaying] = useState();
     const [songObject, setSongObject] = useState();
     const handlePrevAndNext = async (type) => {
-        return await fetchPrevAndNext(token, type).then(() => setPlaying(true));
+        return await fetchHandler(token, `/v1/me/player/${type}`, "post").then(() =>
+            setPlaying(true)
+        );
     };
     const handlePlaySong = async () => {
+        const device_id = "16bd04e11348489421f2cd765d3b07b70fa8ecfb";
+        const context_uri = "spotify:playlist:6AGdPxT2tGSKcbSGhGaylj";
         if (isPlaying) {
             setPlaying(false);
-            return await fetchPause(token, "16bd04e11348489421f2cd765d3b07b70fa8ecfb");
+            return await fetchHandler(token, `/v1/me/player/pause?device_id=${device_id}`, "put");
         }
-        return await fetchPlayer(token, "16bd04e11348489421f2cd765d3b07b70fa8ecfb")
+        return await fetchHandler(token, `/v1/me/player/play?device_id=${device_id}`, "put", {
+            body: {
+                context_uri,
+                offset: {
+                    position: 0,
+                },
+                position_ms: 0,
+            },
+        })
             .then(() => setPlaying(true))
             .catch((error) => console.log(error));
     };
 
     useEffect(() => {
         const callData = async () => {
-            if (token) {
-                const response = await fetchCurrentlyPlaying(token);
-                const response_songObject = await fetchUserQueue(token);
-                if (response.data.is_playing) {
+            if (token !== undefined) {
+                const res = await fetchHandler(token, "/v1/me/player/currently-playing");
+                const res2 = await fetchHandler(token, "/v1/me/player/queue");
+                if (res.data.is_playing) {
                     setPlaying(true);
                 }
-                setSongObject(response_songObject.data.currently_playing);
+                setSongObject(res2.data.currently_playing);
             }
         };
         callData();
     }, [token, songObject]);
-
     return (
         <footer className="flex items-center justify-between z-10 bg-[#121212] w-[100%] h-[15vh] text-white gap-5">
             <div className="ml-5">

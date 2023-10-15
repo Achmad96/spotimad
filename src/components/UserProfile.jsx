@@ -1,15 +1,19 @@
 import { useEffect, useState, useContext } from "react";
 import profileImg from "../assets/profile.jpg";
-import fetchUser from "../utils/fetchUser";
-import { TokenContext } from "../App";
+import { Token } from "../App";
+import fetchHandler from "../utils/fetchHandler";
 
 export default function UserProfile() {
     const [profile, setProfile] = useState({});
-    const token = useContext(TokenContext);
+    const token = useContext(Token);
     useEffect(() => {
         const callData = async () => {
             if (token !== undefined) {
-                const response = await fetchUser(token);
+                const response = await fetchHandler(
+                    token,
+                    `/v1/users/${process.env.REACT_APP_USER_ID}`,
+                    "get"
+                );
                 setProfile(response.data);
             }
         };

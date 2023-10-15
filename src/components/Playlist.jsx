@@ -1,18 +1,20 @@
 import { useState, useEffect, useContext } from "react";
-import fetchPlaylist from "../utils/fetchPlaylist";
-import { TokenContext } from "../App";
-export default function Playlist(props) {
-    const { playlist_state, listSongId_state } = props;
-    const [list, setList] = useState({});
+import { Token } from "../App";
+import fetchHandler from "../utils/fetchHandler";
+export default function Playlist({ playlist_state, listSongId_state }) {
+    const [listSong, setListSong] = useState({});
     const [, setPlaylist] = playlist_state;
     const [listSongId, setListSongId] = listSongId_state;
-    const token = useContext(TokenContext);
+    const token = useContext(Token);
 
     useEffect(() => {
         const callData = async () => {
             if (token !== undefined) {
-                const response = await fetchPlaylist(token);
-                setList(response.data);
+                const response = await fetchHandler(
+                    token,
+                    `/v1/users/${process.env.REACT_APP_USER_ID}/playlists`
+                );
+                setListSong(response.data);
                 setPlaylist(response.data);
             }
         };
@@ -21,11 +23,11 @@ export default function Playlist(props) {
 
     return (
         <div className="flex flex-col bg-[#121212] w-60 h-[68vh] overflow-y-auto text-white rounded-xl gap-2">
-            {list?.items?.map((v, i) => {
+            {listSong?.items?.map((v, i) => {
                 const class_name = `flex gap-3 hover:bg-zinc-700 w-full p-5 ${
                     listSongId === v.id ? "bg-zinc-700" : ""
                 }`;
-                if (!list) {
+                if (!listSong) {
                     setPlaylist({
                         id: v.id,
                         name: v.name,

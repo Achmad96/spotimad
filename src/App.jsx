@@ -5,9 +5,7 @@ import "./App.css";
 import LeftLayout from "./layout/LeftLayout";
 import RightLayout from "./layout/RightLayout";
 import BottomLayout from "./layout/BottomLayout";
-import SpotifyWebApi from "spotify-web-api-js";
 
-const spotifyApi = new SpotifyWebApi();
 const scope = [
     "user-read-playback-state",
     "user-modify-playback-state",
@@ -16,12 +14,11 @@ const scope = [
     "user-modify-playback-state",
 ].join("%20");
 
-export const TokenContext = createContext();
+export const Token = createContext();
 export default function App() {
-    const [listSongId, setListSongId] = useState();
     const [token, setToken] = useState();
+    const [listSongId, setListSongId] = useState();
     const [playlist, setPlaylist] = useState();
-    const [position, setPosition] = useState();
 
     useEffect(() => {
         const clientId = process.env.REACT_APP_BASIC_CLIENT_ID;
@@ -37,7 +34,6 @@ export default function App() {
 
         if (hashParams.access_token) {
             setToken(hashParams.access_token);
-            spotifyApi.setAccessToken(hashParams.access_token);
         } else {
             window.location.href = `https://accounts.spotify.com/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
         }
@@ -45,8 +41,8 @@ export default function App() {
     }, []);
 
     return (
-        <main className="flex flex-col bg-black h-screen overflow-hidden">
-            <TokenContext.Provider value={token}>
+        <Token.Provider value={token}>
+            <main className="flex flex-col bg-black h-screen overflow-hidden">
                 <div className="flex flex-row">
                     <LeftLayout
                         playlist_state={[playlist, setPlaylist]}
@@ -55,11 +51,10 @@ export default function App() {
                     <RightLayout
                         playlist_state={[playlist, setPlaylist]}
                         listSongId_state={[listSongId, setListSongId]}
-                        position_state={[position, setPosition]}
                     />
                 </div>
-                <BottomLayout token={token} />
-            </TokenContext.Provider>
-        </main>
+                <BottomLayout />
+            </main>
+        </Token.Provider>
     );
 }

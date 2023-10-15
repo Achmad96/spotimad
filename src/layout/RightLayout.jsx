@@ -1,8 +1,9 @@
 import { useEffect, useState, useContext, useRef, useReducer } from "react";
-import fetchPlaylistItems from "../utils/fetchPlaylistItems";
-import { TokenContext } from "../App";
+import fetchHandler from "../utils/fetchHandler";
+import { Token } from "../App";
 import { IoTimeSharp } from "react-icons/io5";
 import { AnimatePresence, motion } from "framer-motion";
+import Song from "../components/Song";
 
 const reducer = (state, action) => {
     // eslint-disable-next-line
@@ -35,12 +36,10 @@ const millisToMinutesAndSeconds = (millis) => {
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 };
 
-export default function RightLayout(props) {
-    const token = useContext(TokenContext);
-    const { playlist_state, listSongId_state, position_state } = props;
+export default function RightLayout({ playlist_state, listSongId_state }) {
+    const token = useContext(Token);
     const [playlist] = playlist_state;
     const [list, setList] = useState({});
-    const [, setPosition] = position_state;
     const [listSongId] = listSongId_state;
 
     const playlistEl = useRef(null);
@@ -50,10 +49,10 @@ export default function RightLayout(props) {
 
     useEffect(() => {
         const callData = async () => {
-            if (token && playlist) {
-                const response = await fetchPlaylistItems(
+            if (token !== undefined && playlist) {
+                const response = await fetchHandler(
                     token,
-                    listSongId ? listSongId : playlist?.items[0]?.id
+                    `/v1/playlists/${listSongId ? listSongId : playlist?.items[0]?.id}/tracks`
                 );
                 setList(response);
             }
@@ -161,29 +160,20 @@ export default function RightLayout(props) {
                             .map((v, i) => {
                                 const name = v.track.name;
                                 const img = v.track.album.images[0].url;
+                                const artists = v.track.artists.map((v) => v.name).join(", ");
                                 const class_name = `flex ${
                                     i < 9 ? "ml-[10px]" : "ml-[2px]"
                                 } p-3 gap-3 w-full`;
                                 return (
-                                    <div
+                                    <Song
                                         key={v?.track?.id}
-                                        className="flex items-center ml-4 mr-4 rounded-md hover:bg-[#2B3731]"
-                                        onClick={() => setPosition({ index: i })}
-                                    >
-                                        <p className="p-5">{i + 1}</p>
-                                        <div className={class_name}>
-                                            <img src={img} alt="song" className="w-10 h-10"></img>
-                                            <div>
-                                                <p className="text-base">{name}</p>
-                                                <p className="text-xs opacity-50">
-                                                    {v.track.artists.map((v) => v.name).join(", ")}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <p className="mr-[14rem]">
-                                            {millisToMinutesAndSeconds(v.track.duration_ms)}
-                                        </p>
-                                    </div>
+                                        className={class_name}
+                                        index={i}
+                                        name={name}
+                                        img={img}
+                                        artists={artists}
+                                        duration_ms={millisToMinutesAndSeconds(v.track.duration_ms)}
+                                    />
                                 );
                             })
                     }
