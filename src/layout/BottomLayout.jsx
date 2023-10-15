@@ -3,6 +3,7 @@ import { BsSkipStartFill, BsFillSkipEndFill } from "react-icons/bs";
 import { useEffect, useState, useContext } from "react";
 import { Token } from "../App";
 import fetchHandler from "../utils/fetchHandler";
+import SongObject from "../components/BottomLayout/SongObject";
 
 export default function BottomLayout() {
     const token = useContext(Token);
@@ -53,20 +54,12 @@ export default function BottomLayout() {
     return (
         <footer className="flex items-center z-10 bg-[#121212] w-[100%] h-[15vh] text-white gap-5">
             <div className="ml-5 w-[43rem]">
-                {songObject?.album && (
-                    <div className="flex gap-1">
-                        <img
-                            src={songObject?.album.images[0].url}
-                            alt="seletced_song"
-                            className="z-10 rounded-xl w-16 h-16"
-                        ></img>
-                        <div className="ml-3 mb-3 flex justify-end flex-col">
-                            <p className="text-sm">{songObject?.name}</p>
-                            <p className="text-xs opacity-60">
-                                {songObject?.artists.map((v) => v.name).join(", ")}
-                            </p>
-                        </div>
-                    </div>
+                {songObject && (
+                    <SongObject
+                        sourceImage={songObject?.album.images[0].url}
+                        name={songObject?.name}
+                        artists={songObject?.artists.map((v) => v.name).join(", ")}
+                    />
                 )}
             </div>
             <div className="flex flex-row items-center gap-5">

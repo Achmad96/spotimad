@@ -1,6 +1,8 @@
 import { useState, useEffect, useContext } from "react";
-import { Token } from "../App";
-import fetchHandler from "../utils/fetchHandler";
+import { Token } from "../../App";
+
+import fetchHandler from "../../utils/fetchHandler";
+
 export default function Playlist({ playlist_state }) {
     const [listSong, setListSong] = useState({});
     const [playlist, setPlaylist] = playlist_state;

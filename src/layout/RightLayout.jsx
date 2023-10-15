@@ -4,7 +4,7 @@ import { IoTimeSharp } from "react-icons/io5";
 import { AnimatePresence, motion } from "framer-motion";
 
 import fetchHandler from "../utils/fetchHandler";
-import Song from "../components/Song";
+import SongObject from "../components/RightLayout/SongObject";
 
 const millisToMinutesAndSeconds = (millis) => {
     var minutes = Math.floor(millis / 60000);
@@ -166,7 +166,7 @@ export default function RightLayout({ playlist_state }) {
                                     i < 9 ? "ml-[10px]" : "ml-[2px]"
                                 } p-3 gap-3 w-full`;
                                 return (
-                                    <Song
+                                    <SongObject
                                         key={v?.track?.id}
                                         className={class_name}
                                         index={i}

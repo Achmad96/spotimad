@@ -1,5 +1,5 @@
-import Playlist from "../components/Playlist";
-import UserProfile from "../components/UserProfile";
+import Playlist from "../components/LeftLayout/Playlist";
+import UserProfile from "../components/LeftLayout/UserProfile";
 
 export default function LeftLayout({ playlist_state }) {
     return (

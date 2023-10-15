@@ -1,7 +1,8 @@
 import { useEffect, useState, useContext } from "react";
-import profileImg from "../assets/profile.jpg";
-import { Token } from "../App";
-import fetchHandler from "../utils/fetchHandler";
+import { Token } from "../../App";
+
+import profileImg from "../../assets/profile.jpg";
+import fetchHandler from "../../utils/fetchHandler";
 
 export default function UserProfile() {
     const [profile, setProfile] = useState({});

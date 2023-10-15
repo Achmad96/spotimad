@@ -1,4 +1,4 @@
-export default function Song({ index, className, name, img, artists, duration_ms }) {
+export default function SongObject({ index, className, name, img, artists, duration_ms }) {
     return (
         <div className="flex items-center ml-4 mr-4 rounded-md hover:bg-[#2B3731]">
             <p className="p-5">{index + 1}</p>
