@@ -1,9 +1,16 @@
 import { useEffect, useState, useContext, useRef, useReducer } from "react";
-import fetchHandler from "../utils/fetchHandler";
 import { Token } from "../App";
 import { IoTimeSharp } from "react-icons/io5";
 import { AnimatePresence, motion } from "framer-motion";
+
+import fetchHandler from "../utils/fetchHandler";
 import Song from "../components/Song";
+
+const millisToMinutesAndSeconds = (millis) => {
+    var minutes = Math.floor(millis / 60000);
+    var seconds = ((millis % 60000) / 1000).toFixed(0);
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+};
 
 const reducer = (state, action) => {
     // eslint-disable-next-line
@@ -30,17 +37,10 @@ const reducer = (state, action) => {
     return { ...state };
 };
 
-const millisToMinutesAndSeconds = (millis) => {
-    var minutes = Math.floor(millis / 60000);
-    var seconds = ((millis % 60000) / 1000).toFixed(0);
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-};
-
-export default function RightLayout({ playlist_state, listSongId_state }) {
+export default function RightLayout({ playlist_state }) {
     const token = useContext(Token);
     const [playlist] = playlist_state;
     const [list, setList] = useState({});
-    const [listSongId] = listSongId_state;
 
     const playlistEl = useRef(null);
     const description = useRef(null);
@@ -52,13 +52,13 @@ export default function RightLayout({ playlist_state, listSongId_state }) {
             if (token !== undefined && playlist) {
                 const response = await fetchHandler(
                     token,
-                    `/v1/playlists/${listSongId ? listSongId : playlist?.items[0]?.id}/tracks`
+                    `/v1/playlists/${playlist.id ? playlist.id : playlist?.items[0]?.id}/tracks`
                 );
                 setList(response);
             }
         };
         callData();
-    }, [token, listSongId, playlist]);
+    }, [token, playlist]);
     const handleScroll = (e) => {
         if (playlistEl.current?.getBoundingClientRect().bottom + 200 < e.target.scrollTop) {
             dispatch({ type: "playlist" });
@@ -99,11 +99,12 @@ export default function RightLayout({ playlist_state, listSongId_state }) {
                             <p className="text-sm">Playlist</p>
                             <p className="text-6xl">{playlist?.name ?? playlist?.items[0].name}</p>
                         </div>
-                        <p className="text-base">
-                            {playlist?.owner ?? playlist?.items[0]?.owner?.display_name} ▪{" "}
-                            <span className="font-light">
-                                {playlist?.tracks ?? playlist?.items[0]?.tracks?.total} lagu
-                            </span>
+                        <p className="text-base font-light">
+                            Terdapat{" "}
+                            <strong className="text-lime-500">
+                                {playlist?.tracks ?? playlist?.items[0]?.tracks?.total}
+                            </strong>{" "}
+                            lagu
                         </p>
                     </div>
                 </div>

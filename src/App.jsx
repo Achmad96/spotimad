@@ -17,7 +17,6 @@ const scope = [
 export const Token = createContext();
 export default function App() {
     const [token, setToken] = useState();
-    const [listSongId, setListSongId] = useState();
     const [playlist, setPlaylist] = useState();
 
     useEffect(() => {
@@ -44,14 +43,8 @@ export default function App() {
         <Token.Provider value={token}>
             <main className="flex flex-col bg-black h-screen overflow-hidden">
                 <div className="flex flex-row">
-                    <LeftLayout
-                        playlist_state={[playlist, setPlaylist]}
-                        listSongId_state={[listSongId, setListSongId]}
-                    />
-                    <RightLayout
-                        playlist_state={[playlist, setPlaylist]}
-                        listSongId_state={[listSongId, setListSongId]}
-                    />
+                    <LeftLayout playlist_state={[playlist, setPlaylist]} />
+                    <RightLayout playlist_state={[playlist, setPlaylist]} />
                 </div>
                 <BottomLayout />
             </main>

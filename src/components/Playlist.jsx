@@ -1,10 +1,9 @@
 import { useState, useEffect, useContext } from "react";
 import { Token } from "../App";
 import fetchHandler from "../utils/fetchHandler";
-export default function Playlist({ playlist_state, listSongId_state }) {
+export default function Playlist({ playlist_state }) {
     const [listSong, setListSong] = useState({});
-    const [, setPlaylist] = playlist_state;
-    const [listSongId, setListSongId] = listSongId_state;
+    const [playlist, setPlaylist] = playlist_state;
     const token = useContext(Token);
 
     useEffect(() => {
@@ -25,7 +24,7 @@ export default function Playlist({ playlist_state, listSongId_state }) {
         <div className="flex flex-col bg-[#121212] w-60 h-[68vh] overflow-y-auto text-white rounded-xl gap-2">
             {listSong?.items?.map((v, i) => {
                 const class_name = `flex gap-3 hover:bg-zinc-700 w-full p-5 ${
-                    listSongId === v.id ? "bg-zinc-700" : ""
+                    playlist.id === v.id ? "bg-zinc-700" : ""
                 }`;
                 if (!listSong) {
                     setPlaylist({
@@ -41,7 +40,6 @@ export default function Playlist({ playlist_state, listSongId_state }) {
                         key={v.id}
                         className={class_name}
                         onClick={() => {
-                            setListSongId(v.id);
                             setPlaylist({
                                 id: v.id,
                                 name: v.name,
