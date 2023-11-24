@@ -21,7 +21,7 @@ export default function App() {
 
     useEffect(() => {
         const clientId = process.env.REACT_APP_BASIC_CLIENT_ID;
-        const redirectUri = process.env.REACT_APP_REDIRECT_URI;
+        const redirectUri = process.env.REACT_APP_BASIC_REDIRECT_URI;
         const hashParams = window.location.hash
             .substring(1)
             .split("&")
